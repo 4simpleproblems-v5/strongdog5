@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Scary Teacher 3D - Poki</title>
+	<script>
+	window.config = {
+		loader: 'unity-2020',
+		debug: false,
+		maxRatio: 24 / 9,
+		minRatio: 9 / 24,
+
+		title: 'Scary Teacher 3D',
+		thumbnail: 'https:\/\/img.poki-cdn.com\/ef999c8420c11a5243237168e8128d5d.png',
+		numScreenshots:  2 ,
+
+		unityVersion: '2022.3.39f1',
+		unityWebglBuildUrl: '',
+
+		fileSize:  20 ,
+		cachedDecompressedFileSizes: {
+			'2ef1c8d72691cad098fe9308743cdef2.framework.js.unityweb':  98592 ,
+			'53f63aacdd3dc269c9ee4459a0f73e6d.wasm.unityweb':  7667887 ,
+			'80a61cd6046391d1595c93fef48c0465.data.unityweb':  12856849 ,
+			'd9d605cb1c18b4ed9fb179406f02ceab.loader.js':  114169 ,
+		},
+		"metadata": {"poki_template_version":1,"background_color":"#231F20","code_filename":"53f63aacdd3dc269c9ee4459a0f73e6d.wasm.unityweb","company_name":"znk","data_filename":"80a61cd6046391d1595c93fef48c0465.data.unityweb","decompression_fallback":"Brotli","development_player":"false","framework_filename":"2ef1c8d72691cad098fe9308743cdef2.framework.js.unityweb","height":"600","loader_filename":"d9d605cb1c18b4ed9fb179406f02ceab.loader.js","product_name":"Scary Teacher 3D","product_version":"1.6","splash_screen_style":"Dark","unity_version":"2022.3.39f1","use_data_caching":"true","use_threads":"false","use_wasm":"true","use_webgl_1_0":"false","use_webgl_2_0":"true","width":"960"}
+	};
+	</script>
+<!-- will be copied to the resulting head //-->
+</head>
+<body>
+	<script src="https://game-cdn.poki.com/loaders/v3/master-loader.js"></script>
+<body style="background-color: #000000; background-image: url('Bg.jpg'); background-repeat: no-repeat; background-size: cover;">
+<!-- will be copied to the resulting body //-->
+<!-- will also be copied to the resulting body //-->
+<script>
+// Listen for fullscreen change events
+//document.addEventListener('fullscreenchange', exitHandler);
+//document.addEventListener('webkitfullscreenchange', exitHandler);
+//document.addEventListener('mozfullscreenchange', exitHandler);
+//document.addEventListener('MSFullscreenChange', exitHandler);
+
+// Listen for cursor lock state changes
+if (!isMobileDevice()) {
+    document.addEventListener('pointerlockchange', cursorStateHandler);
+    document.addEventListener('webkitpointerlockchange', cursorStateHandler);
+    document.addEventListener('mozpointerlockchange', cursorStateHandler);
+}
+
+var wasLocked = false;
+var isUnlockEventTriggered = false;
+
+function cursorStateHandler(event) {
+    console.log(event);
+
+    var isLocked = document.pointerLockElement ||
+                   document.webkitPointerLockElement ||
+                   document.mozPointerLockElement;
+
+    if (!isLocked) {
+        if (wasLocked && !isUnlockEventTriggered) {
+            console.log('Cursor unlocked!');
+            window.postMessage('callCSharp', '*');
+            movement = { x: 0, y: 0 };
+            window.postMessage({ type: 'getinput', movement: movement }, '*');
+            isUnlockEventTriggered = true;
+        }
+    } else {
+        console.log('Cursor locked!');
+        isUnlockEventTriggered = false;
+    }
+
+    wasLocked = !!isLocked;
+}
+
+var movement = { x: 0, y: 0 };
+
+document.addEventListener('keydown', function (event) {
+    switch (event.code) {
+        case 'KeyW':
+        case 'ArrowUp':
+            movement.y = 1;
+            break;
+        case 'KeyS':
+        case 'ArrowDown':
+            movement.y = -1;
+            break;
+        case 'KeyA':
+        case 'ArrowLeft':
+            movement.x = -1;
+            break;
+        case 'KeyD':
+        case 'ArrowRight':
+            movement.x = 1;
+            break;
+    }
+    sendMovementToUnity();
+});
+
+document.addEventListener('keyup', function (event) {
+    switch (event.code) {
+        case 'KeyW':
+        case 'ArrowUp':
+        case 'KeyS':
+        case 'ArrowDown':
+            movement.y = 0;
+            break;
+        case 'KeyA':
+        case 'ArrowLeft':
+        case 'KeyD':
+        case 'ArrowRight':
+            movement.x = 0;
+            break;
+    }
+    sendMovementToUnity();
+});
+
+function sendMovementToUnity() {
+    window.postMessage({ type: 'getinput', movement: movement }, '*');
+}
+
+function isMobileDevice() {
+    return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || navigator.maxTouchPoints > 0;
+}
+</script>
+</body>
+</html>
