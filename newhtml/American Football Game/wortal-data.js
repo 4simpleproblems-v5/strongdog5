@@ -1,0 +1,1 @@
+window.wortalGameID = '66fb98ca0818af00f1288c82';
