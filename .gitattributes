@@ -2,3 +2,5 @@
 large_files/** filter=lfs diff=lfs merge=lfs -text
 html/Thats[[:space:]]not[[:space:]]my[[:space:]]neighbor/** filter=lfs diff=lfs merge=lfs -text
 html/Buckshot[[:space:]]roulette/** filter=lfs diff=lfs merge=lfs -text
+/html/Thats[[:space:]]not[[:space:]]my[[:space:]]neighbor/** filter=lfs diff=lfs merge=lfs -text
+/html/Buckshot[[:space:]]roulette/** filter=lfs diff=lfs merge=lfs -text
