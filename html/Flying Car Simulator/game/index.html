@@ -29,6 +29,71 @@
 	</script>
 </head>
 <body>
-	<script src="https://game-cdn.poki.com/loaders/v3/master-loader.js"></script>
+    <div id="unity-container" class="unity-desktop">
+        <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
+        <div id="unity-loading-bar">
+            <div id="unity-logo"></div>
+            <div id="unity-progress-bar-empty">
+                <div id="unity-progress-bar-full"></div>
+            </div>
+        </div>
+        <div id="unity-warning"></div>
+        <div id="unity-footer">
+            <div id="unity-webgl-logo"></div>
+            <div id="unity-fullscreen-button"></div>
+            <div id="unity-build-title"></div>
+        </div>
+    </div>
+    <script src="UnityLoader.2019.2.js"></script>
+    <script>
+        var unityContainer = document.querySelector("#unity-container");
+        var canvas = document.querySelector("#unity-canvas");
+        var loadingBar = document.querySelector("#unity-loading-bar");
+        var progressBarFull = document.querySelector("#unity-progress-bar-full");
+        var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+        var warningBanner = document.querySelector("#unity-warning");
+
+        // This is a basic error handling for the banner.
+        function unityShowBanner(msg, type) {
+            if (msg.includes("PokiSDK")) return; // Ignore Poki SDK messages
+            var div = document.createElement('div');
+            div.innerHTML = msg;
+            warningBanner.appendChild(div);
+            if (type == 'error') warningBanner.style.background = 'red';
+            else {
+                if (type == 'warning') warningBanner.style.background = 'yellow';
+            }
+            warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+            setTimeout(function() {
+                if (warningBanner.contains(div)) {
+                    warningBanner.removeChild(div);
+                    warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+                }
+            }, 5000);
+        }
+
+        loadingBar.style.display = "block";
+
+        // Unity 2019.2 WebGL uses UnityLoader.instantiate
+        // The first argument is the ID of the container div, and the second is the path to the build JSON.
+        var unityInstance = UnityLoader.instantiate("unity-container", window.config.unityWebglBuildUrl, {
+            onProgress: function(gameInstance, progress) {
+                if (!gameInstance.Module) return; // sometimes onProgress can be called before Module is ready
+                if (progress === 1) {
+                    loadingBar.style.display = "none";
+                }
+                progressBarFull.style.width = (100 * progress) + "%";
+            },
+            // The "Module" object might need to be configured more depending on the Unity build settings.
+            // For example, Module.setStatus, Module.locateFile, etc.
+            // However, for a basic load, this should be a good starting point.
+        });
+
+        fullscreenButton.onclick = () => {
+            if (unityInstance && unityInstance.SetFullscreen) {
+                unityInstance.SetFullscreen(1);
+            }
+        };
+    </script>
 </body>
 </html>
